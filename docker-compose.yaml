@@ -1,0 +1,26 @@
+version: '3'
+services:
+  backendimg:
+    container_name: backendimg
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: imgback:1.0
+    command: bash -c "cd /backend && python app.py"
+    volumes:
+      - ./backend/app:/backend
+    networks:
+      - img_network
+  proxyimg:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "4008:80"
+    depends_on:
+      - backendimg
+    networks:
+      - img_network
+networks:
+  img_network:
+    driver: bridge
